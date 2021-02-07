@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class main {
     static int n = 0;
     //Initialization queue,linkedlist
-    static int calls = 0;
+    static int outputcounter = 0;
 
     static Queue bag = null;
     static LinkedList[] successor = null;
@@ -44,18 +44,19 @@ public class main {
                 //System.out.println(first + " " + second);
                 if (first == 0 && second == 0) {
                     break;
-
                 }
                 //Add item to successor and pred linklist
                 //succ will locate the succ of a specific node
                 //if 5 connect to 4 and 3 then in index 5 will next with 4,3 node
                 //pred will count the number of pred if pred is 0 then will add to bag to do the topsort
+                //if node did not actually have a successor list then create one
                 if (successor[first - 1] == null) {
                     successor[first - 1] = new LinkedList();
                     successor[first - 1].add(second);
                 } else {
                     successor[first - 1].add(second);
                 }
+                //number of successor on each pred
                 pred[second - 1]++;
             }
             /*for (int i = 0; i < n; i++) {
@@ -73,15 +74,15 @@ public class main {
             if(pred[i] == 0){
                 bag.push(i+1);
                 //check bag with index 2/3/5
-                System.out.println(i+1);
+                //System.out.println(i+1);
             }
         }
         topsort();
-        System.out.println("calls"+calls);
+        System.out.println("calls"+ outputcounter);
     }
 
     private static void topsort() {
-        int length = bag.length;
+        int length = bag.getLength();
         if(length > 0){
             while (length > 0) {
                 //pop the last one of the bag
@@ -115,16 +116,22 @@ public class main {
                     //successor[pred -1].head is the first element of successor set of pred
 
                     while (succ.next != null) {
-                        int s = succ.next.val;
+                        //if we go to pred 3 then we iterate 1 and 4 here
+                        //s store the first successor of an pred
+                        int s = succ.next.data;
+                        //System.out.println(s);
                         //System.out.println("The successor of predint is " + s);
 
                         pred[s - 1]--;
+                        //System.out.println(pred[s - 1]);
                         //use for recursion
                         //if we check for the pred counter is already being decreased
                         //then we push back and count how much push we have done
+                        //if counter of successor is not 0 then go to next successor
+
 
                         if (pred[s - 1] == 0) {
-                            //push back successor
+                            //push succssor to the bag
                             bag.push(s);
 
                             //System.out.println("Item we push to bag is " + s);
@@ -132,42 +139,58 @@ public class main {
                             reversecount++;
 
                         }
-                        //go to the next pred
+                        //go to the next succor
                         succ = succ.next;
                     }
 
 
                 }
+                //recursion
                 topsort();
+                //we can also do a duplicate graph contains all the node and egde
+                //but cost more time
+
+
 
                 for (int i = 0; i < reversecount; i++) {
-                    bag.remove_end();
+                    //remove the very last item of the bag in order to keep bag not full
+                    //first remove the first 3 item 235 then add //414141
+                    bag.remove();
+                    //make a new front node
+                    //and do the topsort again
+
                     //System.out.println(bag.toString());
                 }
                 bag.push(predint);
+                //add back the count of each pred and resotre the output array
+                //do the permutation
 
                 if (successor[predint - 1] != null) {
 
                     LinkedList.Node succ = successor[predint-1].head;
 
                     while (succ.next != null) {
-                        int s = succ.next.val;
+                        int s = succ.next.data;
                         pred[s - 1]++;
 
                         succ = succ.next;
                     }
                 }
+                //reduce the count to the origin size
+                //output[] restore to 0
                 counter--;
             }
+            //if length being decreased to 0 which means exist one top sort ranking
+            //If found, add one to calls
+
         }else{
-            if (calls <= 25) {
-                //This takes O(n) time each time we want to print.
+            if (outputcounter <= 25) {
                 for (int i = 0; i < n; i++) {
                     System.out.print(output[i] + " ");
                 }
                 System.out.println();
             }
-            calls++;
+            outputcounter++;
         }
 
     }
