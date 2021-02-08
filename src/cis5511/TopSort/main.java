@@ -186,7 +186,7 @@ public class main {
         }else{
             if (outputcounter <= 25) {
                 for (int i = 0; i < n; i++) {
-                    System.out.print(output[i] + " ");
+                    System.out.print(output[i]);
                 }
                 System.out.println();
             }
